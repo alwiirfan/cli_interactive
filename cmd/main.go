@@ -55,6 +55,37 @@ func main() {
 		},
 	}
 
+	//  Mengambil semua wiki dari database
+	rootCmd.AddCommand(&cobra.Command{
+		Use:   "get-all-wikis",
+		Short: "Get all wikis from the database",
+		Run:   wikisHandler.GetAllWikisHandler,
+	})
+
+	// Mengambil wiki berdasarkan ID dari database
+	rootCmd.AddCommand(&cobra.Command{
+		Use:   "get-wiki-by-id [id]",
+		Short: "Get a wiki by ID from the database",
+		Args:  cobra.ExactArgs(1),
+		Run:   wikisHandler.GetWikisByIDHandler,
+	})
+
+	// Mengupdate wiki di dalam database
+	rootCmd.AddCommand(&cobra.Command{
+		Use:   "update-wiki [id]",
+		Short: "Update a wiki in the database",
+		Args:  cobra.ExactArgs(1),
+		Run:   wikisHandler.UpdateWikisHandler,
+	})
+
+	//  Menghapus wiki dari database
+	rootCmd.AddCommand(&cobra.Command{
+		Use:   "delete-wiki [id]",
+		Short: "Delete a wiki from the database",
+		Args:  cobra.ExactArgs(1),
+		Run:   wikisHandler.DeleteWikisHandler,
+	})
+
 	if err := rootCmd.Execute(); err != nil {
 		logrus.Fatal(err)
 	}
