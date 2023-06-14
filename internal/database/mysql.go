@@ -2,7 +2,6 @@ package database
 
 import (
 	"cli_interactive/internal/config"
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -18,7 +17,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func ConnectDB(ctx context.Context, cfg *config.Config) (*gorm.DB, error) {
+func ConnectDB(cfg *config.Config) (*gorm.DB, error) {
 
 	fmt.Printf("%+v\n ", cfg)
 
@@ -43,22 +42,6 @@ func ConnectDB(ctx context.Context, cfg *config.Config) (*gorm.DB, error) {
 
 	if err != nil {
 		panic("cannot connect to database")
-	}
-
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, err
-	}
-
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
-
-	if err := sqlDB.PingContext(ctx); err != nil {
-		return nil, err
 	}
 
 	logrus.Info("connect to database successfully")
