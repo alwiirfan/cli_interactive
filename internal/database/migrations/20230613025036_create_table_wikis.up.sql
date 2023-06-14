@@ -1,8 +1,8 @@
-CREATE TABLE wikis {
+CREATE TABLE wikis (
     wikis_id BIGINT NOT NULL AUTO_INCREMENT,
     topic VARCHAR(99) NOT NULL,
-    description TEXT NOT NULL,
+    description TEXT DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
     PRIMARY KEY (wikis_id)
-};
+);
