@@ -71,21 +71,23 @@ func main() {
 
 	rootCmd.AddCommand(getWikiByIDCmd)
 
-	// Mengupdate wiki di dalam database
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "update-topic-description-wiki [id]",
+	// Mengupdate topic dan deskripsi berdasarkan ID dari database
+	updateTopicDescriptionHandler := &cobra.Command{
+		Use:   "update-topic-description-wiki",
 		Short: "Update a wiki in the database",
-		Args:  cobra.ExactArgs(1),
 		Run:   wikisHandler.UpdateTopicDescriptionHandler,
-	})
+	}
+
+	rootCmd.AddCommand(updateTopicDescriptionHandler)
 
 	//  Menghapus wiki dari database
-	rootCmd.AddCommand(&cobra.Command{
-		Use:   "delete-wiki [id]",
+	deleteWikisHandler := &cobra.Command{
+		Use:   "delete-wiki",
 		Short: "Delete a wiki from the database",
-		Args:  cobra.ExactArgs(1),
 		Run:   wikisHandler.DeleteWikisHandler,
-	})
+	}
+
+	rootCmd.AddCommand(deleteWikisHandler)
 
 	// Menjalankan worker
 	rootCmd.AddCommand(&cobra.Command{
