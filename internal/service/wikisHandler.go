@@ -102,13 +102,41 @@ func (handler *HandlerImpl) GetWikisByIDHandler(cmd *cobra.Command, args []strin
 	fmt.Printf("ID: %d, Topic: %s, Description: %s\n", wiki.ID, wiki.Topic, wiki.Description)
 }
 
-// Handler untuk mengambil input dari pengguna dan memperbarui topik dan deskripsi wiki
+// Menggunakan prompt untuk meminta pengguna memasukkan ID untuk update topik dan description
 func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		log.Fatal("Please provide a single argument: ID")
+	var id string
+	var topic string
+
+	if len(args) == 2 {
+		id = args[0]
+		topic = args[1]
+	} else {
+
+		// Menggunakan prompt untuk meminta ID
+		idPrompt := promptui.Prompt{
+			Label:    "Enter the ID",
+			Validate: dto.ValidateNonEmptyInput,
+		}
+
+		var err error // Tambahkan deklarasi err di sini
+
+		id, err = idPrompt.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Menggunakan prompt untuk meminta topik
+		topicPrompt := promptui.Prompt{
+			Label:    "Enter a new topic",
+			Validate: dto.ValidateNonEmptyInput,
+		}
+
+		topic, err = topicPrompt.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	id := args[0]
 	wikiID := dto.ConvertToInt(id)
 
 	wiki, err := handler.wikisRepository.GetWikisByIDRepo(wikiID)
@@ -116,24 +144,13 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 		log.Fatal(err)
 	}
 
-	prompt := promptui.Prompt{
-		Label:    "Enter a new topic",
-		Default:  wiki.Topic,
-		Validate: dto.ValidateNonEmptyInput,
-	}
-
-	newTopic, err := prompt.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Mengambil deskripsi baru dari Wikipedia berdasarkan topik baru
-	newDescription, err := handler.wikisRepository.UpdateDescriptionFromWikipedia(newTopic)
+	newDescription, err := handler.wikisRepository.UpdateDescriptionFromWikipedia(topic)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	wiki.Topic = newTopic
+	wiki.Topic = topic
 	wiki.Description = newDescription
 	wiki.Updated_at = time.Now()
 
@@ -145,13 +162,26 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 	fmt.Println("Wiki updated successfully.")
 }
 
-// untuk menghapus data wiki berdasarkan ID yang diberikan sebagai argumen.
+// Menghapus data wiki berdasarkan ID yang diberikan sebagai argumen.
 func (handler *HandlerImpl) DeleteWikisHandler(cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		log.Fatal("Please provide a single argument: ID")
+	var id string
+
+	if len(args) == 1 {
+		id = args[0]
+	} else {
+		// Menggunakan prompt untuk meminta ID
+		idPrompt := promptui.Prompt{
+			Label:    "Enter the ID",
+			Validate: dto.ValidateNonEmptyInput,
+		}
+
+		var err error
+		id, err = idPrompt.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	id := args[0]
 	wikiID := dto.ConvertToInt(id)
 
 	err := handler.wikisRepository.DeleteWikisRepo(wikiID)
