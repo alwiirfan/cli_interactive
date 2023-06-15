@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// pembantu untuk mengonversi string ke int.
+// pembantu untuk mengonversi string ke int
 func ConvertToInt(str string) int {
 	var value int
 	_, err := fmt.Sscanf(str, "%d", &value)
