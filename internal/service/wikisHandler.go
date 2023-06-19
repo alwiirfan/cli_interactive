@@ -26,7 +26,7 @@ func NewHandlerImpl(repository *database.WikisRepositoryImpl) *HandlerImpl {
 }
 
 // menambahkan topik
-func (handler *HandlerImpl) StartInteractiveCLI(cmd *cobra.Command, args []string) {
+func (handler *HandlerImpl) AddTopicHandler(cmd *cobra.Command, args []string) {
 	prompt := promptui.Prompt{
 		Label: "Enter a topic",
 	}
@@ -47,7 +47,7 @@ func (handler *HandlerImpl) StartInteractiveCLI(cmd *cobra.Command, args []strin
 
 		err = handler.wikisRepository.AddTopicWikisRepo(wiki)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("topic cannot be empty", err)
 		}
 
 		fmt.Println("Topic saved to the database.")
@@ -58,7 +58,7 @@ func (handler *HandlerImpl) StartInteractiveCLI(cmd *cobra.Command, args []strin
 func (handler *HandlerImpl) GetAllWikisHandler(cmd *cobra.Command, args []string) {
 	wikis, err := handler.wikisRepository.GetAllWikisRepo()
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to get all wikis:", err)
 	}
 
 	for _, wiki := range wikis {
@@ -83,7 +83,7 @@ func (handler *HandlerImpl) GetWikisByIDHandler(cmd *cobra.Command, args []strin
 		var err error
 		id, err = prompt.Run()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
 		}
 	} else {
 		id = args[0]
@@ -91,12 +91,12 @@ func (handler *HandlerImpl) GetWikisByIDHandler(cmd *cobra.Command, args []strin
 
 	wikiID, err := strconv.Atoi(id)
 	if err != nil {
-		log.Fatal("Invalid ID format:", err)
+		log.Println("Invalid ID format:", err)
 	}
 
 	wiki, err := handler.wikisRepository.GetWikisByIDRepo(wikiID)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to get wiki by id:", err)
 	}
 
 	fmt.Printf("ID: %d, Topic: %s, Description: %s\n", wiki.ID, wiki.Topic, wiki.Description)
@@ -118,11 +118,11 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 			Validate: dto.ValidateNonEmptyInput,
 		}
 
-		var err error // Tambahkan deklarasi err di sini
+		var err error
 
 		id, err = idPrompt.Run()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
 		}
 
 		// Menggunakan prompt untuk meminta topik
@@ -133,7 +133,7 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 
 		topic, err = topicPrompt.Run()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
 		}
 	}
 
@@ -141,13 +141,13 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 
 	wiki, err := handler.wikisRepository.GetWikisByIDRepo(wikiID)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to get wiki by id:", err)
 	}
 
 	// Mengambil deskripsi baru dari Wikipedia berdasarkan topik baru
 	newDescription, err := handler.wikisRepository.UpdateDescriptionFromWikipedia(topic)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to update description from wikipedia:", err)
 	}
 
 	wiki.Topic = topic
@@ -156,7 +156,7 @@ func (handler *HandlerImpl) UpdateTopicDescriptionHandler(cmd *cobra.Command, ar
 
 	err = handler.wikisRepository.UpdateTopicDescriptionRepo(wiki)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to update topic and description wiki:", err)
 	}
 
 	fmt.Println("Wiki updated successfully.")
@@ -178,7 +178,7 @@ func (handler *HandlerImpl) DeleteWikisHandler(cmd *cobra.Command, args []string
 		var err error
 		id, err = idPrompt.Run()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
 		}
 	}
 
@@ -186,7 +186,7 @@ func (handler *HandlerImpl) DeleteWikisHandler(cmd *cobra.Command, args []string
 
 	err := handler.wikisRepository.DeleteWikisRepo(wikiID)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("failed to delete wiki:", err)
 	}
 
 	fmt.Println("Wiki deleted successfully.")
@@ -215,7 +215,7 @@ func (handler *HandlerImpl) WorkerHandler(cmd *cobra.Command, args []string) {
 			// untuk mengupdate deskripsi wiki dari sumber Wikipedia.
 			description, err := handler.wikisRepository.UpdateDescriptionFromWikipedia(wiki.Topic)
 			if err != nil {
-				log.Println(err)
+				log.Println("failed to update description from wikipedia:", err)
 				continue
 			}
 
@@ -225,7 +225,7 @@ func (handler *HandlerImpl) WorkerHandler(cmd *cobra.Command, args []string) {
 			// untuk mengupdate waktu terakhir diubah (updatedAt) dari wiki.
 			err = handler.wikisRepository.UpdateUpdatedAt(wiki)
 			if err != nil {
-				log.Println(err)
+				log.Println("failed to update updated_at wiki:", err)
 				continue
 			}
 
