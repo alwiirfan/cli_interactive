@@ -5,7 +5,6 @@ import (
 	"cli_interactive/internal/database"
 	"cli_interactive/internal/service"
 	"errors"
-	"fmt"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
@@ -47,20 +46,26 @@ func main() {
 	wikisHandler := service.NewHandlerImpl(wikisRepository)
 
 	rootCmd := &cobra.Command{
-		Use:   "add-wikis",
-		Short: "CLI to store topics in the database",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Welcome to the Wiki CLI!")
-			wikisHandler.StartInteractiveCLI(cmd, args)
-		},
+		Use: "app",
 	}
 
+	// menambahkan topic
+	addWikisCmd := &cobra.Command{
+		Use:   "add-topic",
+		Short: "Add wikis to the database",
+		Run:   wikisHandler.AddTopicHandler,
+	}
+
+	rootCmd.AddCommand(addWikisCmd)
+
 	//  Mengambil semua wiki dari database
-	rootCmd.AddCommand(&cobra.Command{
+	getAllWikisCmd := &cobra.Command{
 		Use:   "get-all-wikis",
 		Short: "Get all wikis from the database",
 		Run:   wikisHandler.GetAllWikisHandler,
-	})
+	}
+
+	rootCmd.AddCommand(getAllWikisCmd)
 
 	// Mengambil wiki berdasarkan ID dari database
 	getWikiByIDCmd := &cobra.Command{
@@ -90,15 +95,15 @@ func main() {
 	rootCmd.AddCommand(deleteWikisHandler)
 
 	// Menjalankan worker
-	rootCmd.AddCommand(&cobra.Command{
+	runWorker := &cobra.Command{
 		Use:   "worker",
 		Short: "Run worker",
-		Run: func(cmd *cobra.Command, args []string) {
-			wikisHandler.WorkerHandler(cmd, args)
-		},
-	})
+		Run:   wikisHandler.WorkerHandler,
+	}
+
+	rootCmd.AddCommand(runWorker)
 
 	if err := rootCmd.Execute(); err != nil {
-		logrus.Fatal(err)
+		logrus.Fatal("application cannot running", err)
 	}
 }
