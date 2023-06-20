@@ -1,1 +1,10 @@
+# environment variable
 *env.sh
+
+# configuration
+*internal/config/config.go
+
+# library
+*go.mod
+*go.sum
+
