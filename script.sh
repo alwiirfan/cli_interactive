@@ -1,5 +1,5 @@
 # to build image cli_interactive
-sudo docker build -t cli-image .
+sudo docker build -t alwi09/cli-image .
 
 # run and create container to cli_interactive and create network
 sudo docker container run --name cli-container --network=host cli-image
