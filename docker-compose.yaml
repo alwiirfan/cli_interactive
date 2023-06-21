@@ -1,0 +1,6 @@
+version: '3.8'
+
+services:
+  cli-container:
+    container_name: cli-container
+    image: alwi09/cli-image:latest
