@@ -24,7 +24,7 @@ func main() {
 	// initialize config
 	envConfigErr := envconfig.Process("", &cfg)
 	if envConfigErr != nil {
-		logrus.Fatal(errors.New("initialize config is error"))
+		logrus.Fatal(errors.New("initialize config is error"), envConfigErr)
 	}
 
 	// initialize database connection
