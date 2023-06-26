@@ -9,3 +9,6 @@ sudo docker container logs cli-container
 
 # look specification
 sudo docker container inspect cli-container
+
+## execute
+sudo docker container exec -it container-name /bin/bash

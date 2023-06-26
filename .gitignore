@@ -1,5 +1,6 @@
 # environment variable
-*env.sh
+env.sh
+.env
 
 # configuration
 *internal/config/config.go
