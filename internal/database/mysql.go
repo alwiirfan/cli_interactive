@@ -41,7 +41,7 @@ func ConnectDB(cfg *config.Config) (*gorm.DB, error) {
 	})
 
 	if err != nil {
-		panic("cannot connect to database")
+		logrus.Panic("cannot connect to database", err.Error())
 	}
 
 	logrus.Info("connect to database successfully")
