@@ -21,7 +21,7 @@ services:
       MYSQL_PASSWORD: "alwiirfani091199"
       MYSQL_DATABASE: "cli_scrappingwiki"
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "mysql-cli-mycontainer"]
       interval: 5s
       timeout: 10s
       retries: 10
